@@ -13,7 +13,7 @@ export default function Home() {
 
   async function mintAction(wallet: WalletContextState, name: string, description: string, file: any) {
 
-    if (!wallet.connected || !wallet.publicKey)
+    if (!wallet.connected || !wallet.publicKey|| !file[0])
       return
 
 
@@ -25,7 +25,7 @@ export default function Home() {
         headers: { Authorization: `Bearer ${process.env.NEXT_PUBLIC_UNDERDOG_API_KEY!}` }
       }
 
-      const cid = await nftstorage.storeBlob(file)
+      const cid = await nftstorage.storeBlob(file[0])
       console.log(cid)
 
       const nftdata = {
@@ -87,7 +87,7 @@ export default function Home() {
             <>
               <div className='justify-center items-center text-center px-4 mx-auto pt-10'>
                 <div>
-                  <input type="file" accept="image/*;capture=camera" onChange={(e) => setFile(e.target.files[0])}></input>
+                  <input type="file" accept="image/*;capture=camera" onChange={(e) => {setFile(e.target.files)}}></input>
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
