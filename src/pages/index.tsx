@@ -13,7 +13,7 @@ export default function Home() {
 
   async function mintAction(wallet: WalletContextState, name: string, description: string, file: any) {
 
-    if (!wallet.connected || !wallet.publicKey|| !file[0])
+    if (!wallet.connected || !wallet.publicKey || !file[0])
       return
 
 
@@ -36,24 +36,25 @@ export default function Home() {
         receiverAddress: wallet.publicKey.toBase58()
       }
 
-      const createNftResponse = await axios.post(`${process.env.NEXT_PUBLIC_UNDERDOG_ENDPOINT}/v2/projects/${1}/nfts`, nftdata, config)
+      let createNftResponse
+      for (var i = 0; i < count; i++) {
+        createNftResponse = await axios.post(`${process.env.NEXT_PUBLIC_UNDERDOG_ENDPOINT}/v2/projects/${1}/nfts`, nftdata, config)
+        // successful
+        if ([200, 202].includes(createNftResponse.status)) {
+          toast.success("Mint successful!", {
+            position: toast.POSITION.BOTTOM_CENTER
+          })
+        }
 
-      // successful
-      if ([200, 202].includes(createNftResponse.status)) {
-        setActionState("Success")
-        setLoading(false)
-        toast.success("Mint successful!", {
-          position: toast.POSITION.BOTTOM_CENTER
-        })
+        //error
+        if ([400, 401].includes(createNftResponse.status)) {
+          toast.error("There was an error.", {
+            position: toast.POSITION.BOTTOM_CENTER
+          })
+        }
       }
-
-      //error
-      if ([400, 401].includes(createNftResponse.status)) {
-        setActionState("Error")
-        toast.error("There was an error.", {
-          position: toast.POSITION.BOTTOM_CENTER
-        })
-      }
+      setActionState("Success")
+      setLoading(false)
     } catch {
       toast.error("There was an error.", {
         position: toast.POSITION.BOTTOM_CENTER
@@ -70,6 +71,7 @@ export default function Home() {
   const [file, setFile] = useState<any>()
   const [loading, setLoading] = useState<boolean>(false)
   const [actionState, setActionState] = useState<"Success" | "Error" | "Loading" | "Waiting">("Waiting")
+  const [count, setCount] = useState<number>(1)
 
 
   return (
@@ -88,7 +90,7 @@ export default function Home() {
             <>
               <div className='justify-center items-center text-center px-4 mx-auto pt-10'>
                 <div>
-                  <input type="file" accept="image/*;capture=camera" onChange={(e) => {setFile(e.target.files)}}></input>
+                  <input type="file" accept="image/*;capture=camera" onChange={(e) => { setFile(e.target.files) }}></input>
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
@@ -119,6 +121,25 @@ export default function Home() {
                       onChange={(e) => setDescription(e.target.value)}
                       className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                       placeholder="Write that description prose here"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+                    Count
+                  </label>
+                  <div className="mt-2">
+                    <input
+                      type="number"
+                      name="count"
+                      id="count"
+                      value={count}
+                      onChange={(e) => {
+                        if (Number(e.target.value) > 0)
+                          setCount(Number(e.target.value))
+                      }}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
