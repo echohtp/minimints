@@ -41,6 +41,7 @@ export default function Home() {
       // successful
       if ([200, 202].includes(createNftResponse.status)) {
         setActionState("Success")
+        setLoading(false)
         toast.success("Mint successful!", {
           position: toast.POSITION.BOTTOM_CENTER
         })
