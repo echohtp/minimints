@@ -38,7 +38,7 @@ export default function Home() {
 
       let createNftResponse
       for (var i = 0; i < count; i++) {
-        createNftResponse = await axios.post(`${process.env.NEXT_PUBLIC_UNDERDOG_ENDPOINT}/v2/projects/${1}/nfts`, nftdata, config)
+        createNftResponse = await axios.post(`${process.env.NEXT_PUBLIC_UNDERDOG_ENDPOINT}/v2/projects/${process.env.NEXT_PUBLIC_UNDERDOG_PROJECT_ID!}/nfts`, nftdata, config)
         // successful
         if ([200, 202].includes(createNftResponse.status)) {
           toast.success("Mint successful!", {
