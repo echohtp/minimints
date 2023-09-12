@@ -28,16 +28,18 @@ export default function Home() {
       const cid = await nftstorage.storeBlob(file[0])
       console.log(cid)
 
-      const nftdata = {
-        name,
-        description,
-        symbol: "",
-        image: `https://ipfs.io/ipfs/${cid}`,
-        receiverAddress: wallet.publicKey.toBase58()
-      }
+
 
       let createNftResponse
       for (var i = 0; i < count; i++) {
+        const nftdata = {
+          name: `${name} #${i+1}`,
+          description,
+          symbol: "",
+          image: `https://ipfs.io/ipfs/${cid}`,
+          receiverAddress: wallet.publicKey.toBase58()
+        }
+        // console.log(nftdata)
         createNftResponse = await axios.post(`${process.env.NEXT_PUBLIC_UNDERDOG_ENDPOINT}/v2/projects/${process.env.NEXT_PUBLIC_UNDERDOG_PROJECT_ID!}/nfts`, nftdata, config)
         // successful
         if ([200, 202].includes(createNftResponse.status)) {
